@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Download, FileText } from 'lucide-react';
 import { fetchContributions, fetchExpenditures, fetchDashboardSummary } from '../services/api';
 import { formatCurrency, formatDate } from '../utils/formatters';
+import { sortRecords } from '../utils/sorting';
 import { showToast } from '../components/Toast';
 import { useLanguage } from '../i18n';
 
@@ -20,8 +21,8 @@ const Reports = () => {
           fetchExpenditures({}),
           fetchDashboardSummary()
         ]);
-        setContributions(contRes.data.data);
-        setExpenditures(expRes.data.data);
+        setContributions(sortRecords(contRes.data.data, 'contributionDate', 'asc'));
+        setExpenditures(sortRecords(expRes.data.data, 'expenseDate', 'asc'));
         setSummary(dashRes.data.data);
       } catch (err) {
         showToast(t('failedReport'), 'error');
