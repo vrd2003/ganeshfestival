@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
+import { Plus, Pencil, Trash2, ExternalLink } from 'lucide-react';
 import useExpenditures from '../hooks/useExpenditures';
 import Modal from '../components/Modal';
 import ExpenditureForm from '../components/ExpenditureForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 import SearchFilter from '../components/SearchFilter';
-import ReceiptViewer from '../components/ReceiptViewer';
 import { showToast } from '../components/Toast';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { resolveReceiptUrl } from '../utils/receiptUrls';
@@ -33,7 +32,6 @@ const Expenditures = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [viewingReceipt, setViewingReceipt] = useState(null);
 
   const handleAdd = async (formData) => {
     await addExpenditure(formData);
@@ -51,14 +49,6 @@ const Expenditures = () => {
     await removeExpenditure(deleteId);
     setDeleteId(null);
     showToast(t('expenditureDeleted'), 'success');
-  };
-
-  const handleViewReceipt = (exp) => {
-    if (exp.receiptFileType === 'application/pdf') {
-      window.open(resolveReceiptUrl(exp.receiptUrl), '_blank');
-    } else {
-      setViewingReceipt(exp);
-    }
   };
 
   return (
@@ -112,12 +102,14 @@ const Expenditures = () => {
                   <td>{formatDate(e.expenseDate)}</td>
                   <td>
                     {e.receiptUrl ? (
-                      <button
+                      <a
                         className="btn btn-sm btn-receipt"
-                        onClick={() => handleViewReceipt(e)}
+                        href={resolveReceiptUrl(e.receiptUrl)}
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        <Eye /> {t('view')}
-                      </button>
+                        <ExternalLink /> {t('view')}
+                      </a>
                     ) : (
                       <span className="no-receipt">—</span>
                     )}
@@ -174,14 +166,6 @@ const Expenditures = () => {
         message={t('deleteQuestion')}
       />
 
-      {/* Receipt Viewer */}
-      <ReceiptViewer
-        isOpen={!!viewingReceipt}
-        onClose={() => setViewingReceipt(null)}
-        receiptUrl={viewingReceipt?.receiptUrl}
-        fileName={viewingReceipt?.receiptFileName}
-        fileType={viewingReceipt?.receiptFileType}
-      />
     </div>
   );
 };
