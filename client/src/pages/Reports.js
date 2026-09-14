@@ -74,19 +74,29 @@ const Reports = () => {
       const currency = (value) => formatCurrency(value);
       const contributionRows = contributions.map((item, index) => `<tr><td>${index + 1}</td><td>${item.contributorName}</td><td>${currency(item.amount)}</td><td>${formatDate(item.contributionDate)}</td></tr>`).join('');
       const expenditureRows = expenditures.map((item, index) => `<tr><td>${index + 1}</td><td>${item.reason}</td><td>${currency(item.amount)}</td><td>${formatDate(item.expenseDate)}</td></tr>`).join('');
-      const printWindow = window.open('', '_blank');
-      if (!printWindow || !printWindow.document) {
-        throw new Error('Please allow pop-ups for PDF export, then try again.');
-      }
-      printWindow.document.write(`<!doctype html><html lang="${language}"><head><meta charset="utf-8"><title>${t('reportTitle')}</title><style>@font-face{font-family:NotoDevanagari;src:url('${window.location.origin}/fonts/NotoSansDevanagari.woff')}body{font-family:NotoDevanagari,Arial,sans-serif;color:#1f2937;padding:28px}h1{text-align:center;color:#ea580c}h2{margin-top:28px;color:#374151}p{text-align:center;color:#6b7280}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left}th{background:#fed7aa}td:nth-child(1),td:nth-child(3){text-align:right}.summary{margin-top:28px;max-width:480px;margin-left:auto}.summary div{display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #e5e7eb}@media print{body{padding:0}}</style></head><body><h1>${t('reportTitle')}</h1><p>${t('generatedOn')}: ${new Date().toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-IN')}</p><h2>${t('contributions')}</h2><table><thead><tr><th>#</th><th>${t('contributor')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${contributionRows}</tbody></table><h2>${t('expenditures')}</h2><table><thead><tr><th>#</th><th>${t('reason')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${expenditureRows}</tbody></table><div class="summary"><h2>${t('financialSummary')}</h2><div><strong>${t('totalContribution')}</strong><span>${currency(summary.totalContribution)}</span></div><div><strong>${t('totalExpenditure')}</strong><span>${currency(summary.totalExpenditure)}</span></div><div><strong>${summary.balance < 0 ? t('deficit') : t('remainingBalance')}</strong><span>${currency(Math.abs(summary.balance))}</span></div></div></body></html>`);
-      printWindow.document.close();
-      printWindow.focus();
+      const printFrame = document.createElement('iframe');
+      printFrame.setAttribute('title', t('reportTitle'));
+      printFrame.style.position = 'fixed';
+      printFrame.style.right = '100%';
+      printFrame.style.bottom = '100%';
+      printFrame.style.width = '1px';
+      printFrame.style.height = '1px';
+      printFrame.style.border = '0';
+      document.body.appendChild(printFrame);
+
+      const printDocument = printFrame.contentDocument;
+      printDocument.open();
+      printDocument.write(`<!doctype html><html lang="${language}"><head><meta charset="utf-8"><title>${t('reportTitle')}</title><style>@font-face{font-family:NotoDevanagari;src:url('${window.location.origin}/fonts/NotoSansDevanagari.woff')}body{font-family:NotoDevanagari,Arial,sans-serif;color:#1f2937;padding:28px}h1{text-align:center;color:#ea580c}h2{margin-top:28px;color:#374151}p{text-align:center;color:#6b7280}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left}th{background:#fed7aa}td:nth-child(1),td:nth-child(3){text-align:right}.summary{margin-top:28px;max-width:480px;margin-left:auto}.summary div{display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #e5e7eb}@media print{body{padding:0}}</style></head><body><h1>${t('reportTitle')}</h1><p>${t('generatedOn')}: ${new Date().toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-IN')}</p><h2>${t('contributions')}</h2><table><thead><tr><th>#</th><th>${t('contributor')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${contributionRows}</tbody></table><h2>${t('expenditures')}</h2><table><thead><tr><th>#</th><th>${t('reason')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${expenditureRows}</tbody></table><div class="summary"><h2>${t('financialSummary')}</h2><div><strong>${t('totalContribution')}</strong><span>${currency(summary.totalContribution)}</span></div><div><strong>${t('totalExpenditure')}</strong><span>${currency(summary.totalExpenditure)}</span></div><div><strong>${summary.balance < 0 ? t('deficit') : t('remainingBalance')}</strong><span>${currency(Math.abs(summary.balance))}</span></div></div></body></html>`);
+      printDocument.close();
       const printWhenReady = () => {
-        if (printWindow.document.fonts?.ready) {
-          printWindow.document.fonts.ready.then(() => printWindow.print());
-        } else {
+        const printWindow = printFrame.contentWindow;
+        const finish = () => {
+          printWindow.focus();
           printWindow.print();
-        }
+          setTimeout(() => printFrame.remove(), 1000);
+        };
+        if (printDocument.fonts?.ready) printDocument.fonts.ready.then(finish);
+        else finish();
       };
       setTimeout(printWhenReady, 300);
       showToast(t('pdfSuccess'), 'success');
