@@ -10,7 +10,7 @@ const useExpenditures = () => {
     search: '',
     startDate: '',
     endDate: '',
-    sortBy: '',
+    sortBy: 'expenseDate',
     sortOrder: 'desc'
   });
 

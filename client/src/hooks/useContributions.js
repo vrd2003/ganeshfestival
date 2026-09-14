@@ -10,7 +10,7 @@ const useContributions = () => {
     search: '',
     startDate: '',
     endDate: '',
-    sortBy: '',
+    sortBy: 'contributionDate',
     sortOrder: 'desc'
   });
 
