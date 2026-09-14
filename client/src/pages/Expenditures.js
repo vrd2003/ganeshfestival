@@ -8,6 +8,7 @@ import SearchFilter from '../components/SearchFilter';
 import ReceiptViewer from '../components/ReceiptViewer';
 import { showToast } from '../components/Toast';
 import { formatCurrency, formatDate } from '../utils/formatters';
+import { resolveReceiptUrl } from '../utils/receiptUrls';
 import { useLanguage } from '../i18n';
 
 const sortOptions = [
@@ -54,7 +55,7 @@ const Expenditures = () => {
 
   const handleViewReceipt = (exp) => {
     if (exp.receiptFileType === 'application/pdf') {
-      window.open(exp.receiptUrl, '_blank');
+      window.open(resolveReceiptUrl(exp.receiptUrl), '_blank');
     } else {
       setViewingReceipt(exp);
     }

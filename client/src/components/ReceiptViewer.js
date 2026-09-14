@@ -1,12 +1,13 @@
 import React from 'react';
 import { X, Download } from 'lucide-react';
 import { useLanguage } from '../i18n';
+import { resolveReceiptUrl } from '../utils/receiptUrls';
 
 const ReceiptViewer = ({ isOpen, onClose, receiptUrl, fileName, fileType }) => {
   const { t } = useLanguage();
   if (!isOpen || !receiptUrl) return null;
 
-  const fullUrl = receiptUrl.startsWith('http') ? receiptUrl : receiptUrl;
+  const fullUrl = resolveReceiptUrl(receiptUrl);
   const isPdf = fileType === 'application/pdf';
 
   const handleDownload = () => {
