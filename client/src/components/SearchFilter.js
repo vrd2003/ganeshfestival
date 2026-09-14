@@ -47,7 +47,6 @@ const SearchFilter = ({ filters, onFilterChange, sortOptions, placeholder }) => 
           onChange={(e) => handleChange('sortBy', e.target.value)}
           id="sort-by"
         >
-          <option value="">{t('defaultSort')}</option>
           {sortOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
