@@ -1,70 +1,88 @@
-# Getting Started with Create React App
+# Ganesh Festival Finance Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React client and Express/Supabase API for managing contributions, expenditures, receipts, and reports.
 
-## Available Scripts
+## Requirements
 
-In the project directory, you can run:
+- Node.js 18 or newer
+- A Supabase project
 
-### `npm start`
+## Configuration
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The root `.env` file is used by the server:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```env
+PORT=5000
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+CLIENT_URL=http://localhost:3000
+```
 
-### `npm test`
+Copy the values from Supabase project settings. Keep the service-role key on the server only; do not expose it in the React client or commit it.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Before starting the API, run `server/supabase/schema.sql` in the Supabase SQL Editor.
 
-### `npm run build`
+## Run Locally
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Open two terminals from the repository root.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Terminal 1, start the API:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```powershell
+cd server
+npm install
+npm start
+```
 
-### `npm run eject`
+Terminal 2, start the React client:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```powershell
+cd client
+npm install
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Open http://localhost:3000. The client proxy sends `/api` requests to the API on port 5000.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Check the API directly at http://localhost:5000/api/health. The server will not start until the Supabase credentials are valid and the schema exists.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Validation
 
-## Learn More
+From `client`, run the production build and tests:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```powershell
+npm run build
+npm test -- --watchAll=false
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+There are no seeded or mock records. New installations start with empty contribution and expenditure lists; add real records through the UI.
 
-### Code Splitting
+## Hosting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Host the `server` and `client` as separate services, or put both behind the same domain.
 
-### Analyzing the Bundle Size
+For the backend service, use:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```text
+Root directory: server
+Build command: npm install
+Start command: npm start
+```
 
-### Making a Progressive Web App
+Set these backend environment variables in the hosting provider:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+CLIENT_URL=https://your-client-domain.example
+```
 
-### Advanced Configuration
+The hosting provider supplies `PORT`; do not remove it from the server configuration.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+For a separately hosted client, set this build environment variable:
 
-### Deployment
+```env
+REACT_APP_API_URL=https://your-api-domain.example/api
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For local development, leave `REACT_APP_API_URL` unset so the client uses the existing proxy to `http://localhost:5000`.
