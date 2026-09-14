@@ -8,36 +8,36 @@
 
 :root {
   /* Background & Surface */
-  --bg-primary: #0a0a14;
-  --bg-secondary: #111122;
-  --bg-surface: #1a1a2e;
-  --bg-card: rgba(26, 26, 46, 0.7);
-  --bg-elevated: #222240;
+  --bg-primary: #f6f7f9;
+  --bg-secondary: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-elevated: #f0f2f5;
 
   /* Accents */
-  --saffron: #FF9933;
-  --saffron-light: #FFB366;
-  --gold: #FFD700;
-  --deep-orange: #FF6B35;
-  --green: #00C896;
-  --green-light: #00E6AC;
-  --blue: #4DA8FF;
-  --blue-light: #80C0FF;
-  --red: #FF4757;
-  --red-light: #FF6B81;
+  --saffron: #c76b16;
+  --saffron-light: #e39a43;
+  --gold: #b7791f;
+  --deep-orange: #d6532f;
+  --green: #087f5b;
+  --green-light: #087f5b;
+  --blue: #2369a8;
+  --blue-light: #3b82c4;
+  --red: #c53030;
+  --red-light: #c53030;
 
   /* Text */
-  --text-primary: #E8E8F0;
-  --text-secondary: #9999B3;
-  --text-muted: #666680;
+  --text-primary: #1f2937;
+  --text-secondary: #526173;
+  --text-muted: #6b7280;
 
   /* Borders */
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 153, 51, 0.3);
+  --border: #e2e6eb;
+  --border-hover: rgba(199, 107, 22, 0.35);
 
   /* Misc */
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+  --shadow: 0 4px 20px rgba(31, 41, 55, 0.08);
+  --shadow-lg: 0 12px 32px rgba(31, 41, 55, 0.12);
   --radius: 12px;
   --radius-sm: 8px;
   --radius-lg: 16px;
@@ -121,9 +121,9 @@ textarea:focus-visible {
 .brand-text h1 {
   font-size: 1.15rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--saffron), var(--gold));
+  background: none;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: var(--saffron);
   background-clip: text;
   line-height: 1.2;
 }
@@ -261,7 +261,7 @@ textarea:focus-visible {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(31, 41, 55, 0.32);
   z-index: 999;
 }
 
@@ -739,7 +739,7 @@ textarea:focus-visible {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--saffron), var(--deep-orange));
+  background: var(--saffron);
   color: #fff;
 }
 
@@ -760,7 +760,7 @@ textarea:focus-visible {
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, var(--red), #cc3344);
+  background: var(--red);
   color: #fff;
 }
 
@@ -820,7 +820,7 @@ textarea:focus-visible {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(31, 41, 55, 0.42);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
