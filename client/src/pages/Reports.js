@@ -3,6 +3,7 @@ import { Download, FileText } from 'lucide-react';
 import { fetchContributions, fetchExpenditures, fetchDashboardSummary } from '../services/api';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { sortRecords } from '../utils/sorting';
+import { resolveReceiptUrl } from '../utils/receiptUrls';
 import { showToast } from '../components/Toast';
 import { useLanguage } from '../i18n';
 
@@ -76,7 +77,11 @@ const Reports = () => {
       const contributionsByDate = [...contributions].sort((a, b) => String(a.contributionDate || '').localeCompare(String(b.contributionDate || '')));
       const expendituresByDate = [...expenditures].sort((a, b) => String(a.expenseDate || '').localeCompare(String(b.expenseDate || '')));
       const contributionRows = contributionsByDate.map((item, index) => `<tr><td>${index + 1}</td><td>${item.contributorName}</td><td>${currency(item.amount)}</td><td>${formatDate(item.contributionDate)}</td></tr>`).join('');
-      const expenditureRows = expendituresByDate.map((item, index) => `<tr><td>${index + 1}</td><td>${item.reason}</td><td>${currency(item.amount)}</td><td>${formatDate(item.expenseDate)}</td></tr>`).join('');
+      const expenditureRows = expendituresByDate.map((item, index) => {
+        const receiptUrl = item.receiptUrl ? resolveReceiptUrl(item.receiptUrl) : '';
+        const receiptLink = receiptUrl ? `<a href="${receiptUrl}" target="_blank" rel="noreferrer">${t('view')}</a>` : '—';
+        return `<tr><td>${index + 1}</td><td>${item.reason}</td><td>${currency(item.amount)}</td><td>${formatDate(item.expenseDate)}</td><td>${receiptLink}</td></tr>`;
+      }).join('');
       const printFrame = document.createElement('iframe');
       printFrame.setAttribute('title', t('reportTitle'));
       printFrame.style.position = 'fixed';
@@ -89,7 +94,7 @@ const Reports = () => {
 
       const printDocument = printFrame.contentDocument;
       printDocument.open();
-      printDocument.write(`<!doctype html><html lang="${language}"><head><meta charset="utf-8"><title>${t('reportTitle')}</title><style>@font-face{font-family:NotoDevanagari;src:url('${window.location.origin}/fonts/NotoSansDevanagari.woff')}body{font-family:NotoDevanagari,Arial,sans-serif;color:#1f2937;padding:28px}h1{text-align:center;color:#ea580c}h2{margin-top:28px;color:#374151}p{text-align:center;color:#6b7280}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left}th{background:#fed7aa}td:nth-child(1),td:nth-child(3){text-align:right}.summary{margin-top:28px;max-width:480px;margin-left:auto}.summary div{display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #e5e7eb}@media print{body{padding:0}}</style></head><body><h1>${t('reportTitle')}</h1><p>${t('generatedOn')}: ${new Date().toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-IN')}</p><h2>${t('contributions')}</h2><table><thead><tr><th>#</th><th>${t('contributor')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${contributionRows}</tbody></table><h2>${t('expenditures')}</h2><table><thead><tr><th>#</th><th>${t('reason')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${expenditureRows}</tbody></table><div class="summary"><h2>${t('financialSummary')}</h2><div><strong>${t('totalContribution')}</strong><span>${currency(summary.totalContribution)}</span></div><div><strong>${t('totalExpenditure')}</strong><span>${currency(summary.totalExpenditure)}</span></div><div><strong>${summary.balance < 0 ? t('deficit') : t('remainingBalance')}</strong><span>${currency(Math.abs(summary.balance))}</span></div></div></body></html>`);
+      printDocument.write(`<!doctype html><html lang="${language}"><head><meta charset="utf-8"><title>${t('reportTitle')}</title><style>@font-face{font-family:NotoDevanagari;src:url('${window.location.origin}/fonts/NotoSansDevanagari.woff')}body{font-family:NotoDevanagari,Arial,sans-serif;color:#1f2937;padding:28px}h1{text-align:center;color:#ea580c}h2{margin-top:28px;color:#374151}p{text-align:center;color:#6b7280}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #d1d5db;padding:8px;text-align:left}th{background:#fed7aa}a{color:#c2410c;text-decoration:underline}td:nth-child(1),td:nth-child(3){text-align:right}.summary{margin-top:28px;max-width:480px;margin-left:auto}.summary div{display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #e5e7eb}@media print{body{padding:0}}</style></head><body><h1>${t('reportTitle')}</h1><p>${t('generatedOn')}: ${new Date().toLocaleDateString(language === 'mr' ? 'mr-IN' : 'en-IN')}</p><h2>${t('contributions')}</h2><table><thead><tr><th>#</th><th>${t('contributor')}</th><th>${t('amount')}</th><th>${t('date')}</th></tr></thead><tbody>${contributionRows}</tbody></table><h2>${t('expenditures')}</h2><table><thead><tr><th>#</th><th>${t('reason')}</th><th>${t('amount')}</th><th>${t('date')}</th><th>${t('receipt')}</th></tr></thead><tbody>${expenditureRows}</tbody></table><div class="summary"><h2>${t('financialSummary')}</h2><div><strong>${t('totalContribution')}</strong><span>${currency(summary.totalContribution)}</span></div><div><strong>${t('totalExpenditure')}</strong><span>${currency(summary.totalExpenditure)}</span></div><div><strong>${summary.balance < 0 ? t('deficit') : t('remainingBalance')}</strong><span>${currency(Math.abs(summary.balance))}</span></div></div></body></html>`);
       printDocument.close();
       const printWhenReady = () => {
         const printWindow = printFrame.contentWindow;
