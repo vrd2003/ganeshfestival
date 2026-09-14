@@ -72,8 +72,10 @@ const Reports = () => {
   const exportPDF = () => {
     try {
       const currency = (value) => formatCurrency(value);
-      const contributionRows = contributions.map((item, index) => `<tr><td>${index + 1}</td><td>${item.contributorName}</td><td>${currency(item.amount)}</td><td>${formatDate(item.contributionDate)}</td></tr>`).join('');
-      const expenditureRows = expenditures.map((item, index) => `<tr><td>${index + 1}</td><td>${item.reason}</td><td>${currency(item.amount)}</td><td>${formatDate(item.expenseDate)}</td></tr>`).join('');
+      const contributionsByDate = [...contributions].sort((a, b) => String(a.contributionDate || '').localeCompare(String(b.contributionDate || '')));
+      const expendituresByDate = [...expenditures].sort((a, b) => String(a.expenseDate || '').localeCompare(String(b.expenseDate || '')));
+      const contributionRows = contributionsByDate.map((item, index) => `<tr><td>${index + 1}</td><td>${item.contributorName}</td><td>${currency(item.amount)}</td><td>${formatDate(item.contributionDate)}</td></tr>`).join('');
+      const expenditureRows = expendituresByDate.map((item, index) => `<tr><td>${index + 1}</td><td>${item.reason}</td><td>${currency(item.amount)}</td><td>${formatDate(item.expenseDate)}</td></tr>`).join('');
       const printFrame = document.createElement('iframe');
       printFrame.setAttribute('title', t('reportTitle'));
       printFrame.style.position = 'fixed';
