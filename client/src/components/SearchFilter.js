@@ -17,6 +17,7 @@ const SearchFilter = ({ filters, onFilterChange, sortOptions, placeholder }) => 
           placeholder={placeholder || t('searchContributor')}
           value={filters.search}
           onChange={(e) => handleChange('search', e.target.value)}
+          aria-label={placeholder || t('searchContributor')}
           id="search-input"
         />
       </div>
@@ -28,6 +29,7 @@ const SearchFilter = ({ filters, onFilterChange, sortOptions, placeholder }) => 
           value={filters.startDate}
           onChange={(e) => handleChange('startDate', e.target.value)}
           placeholder={t('startDate')}
+          aria-label={t('startDate')}
           id="filter-start-date"
         />
         <span className="date-separator">{t('to')}</span>
@@ -36,6 +38,7 @@ const SearchFilter = ({ filters, onFilterChange, sortOptions, placeholder }) => 
           value={filters.endDate}
           onChange={(e) => handleChange('endDate', e.target.value)}
           placeholder={t('endDate')}
+          aria-label={t('endDate')}
           id="filter-end-date"
         />
       </div>
@@ -45,6 +48,7 @@ const SearchFilter = ({ filters, onFilterChange, sortOptions, placeholder }) => 
         <select
           value={filters.sortBy}
           onChange={(e) => handleChange('sortBy', e.target.value)}
+          aria-label={t('date')}
           id="sort-by"
         >
           {sortOptions.map((opt) => (
@@ -56,6 +60,7 @@ const SearchFilter = ({ filters, onFilterChange, sortOptions, placeholder }) => 
         <select
           value={filters.sortOrder}
           onChange={(e) => handleChange('sortOrder', e.target.value)}
+          aria-label={t('sortOrder') || 'Sort order'}
           id="sort-order"
         >
           <option value="desc">{t('descending')}</option>
