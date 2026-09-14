@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as api from '../services/api';
+import { sortRecords } from '../utils/sorting';
 
 const useExpenditures = () => {
   const [expenditures, setExpenditures] = useState([]);
@@ -28,7 +29,7 @@ const useExpenditures = () => {
       }
       const { data } = await api.fetchExpenditures(params);
       if (data.success) {
-        setExpenditures(data.data);
+        setExpenditures(sortRecords(data.data, filters.sortBy, filters.sortOrder));
         setTotal(data.total);
       }
     } catch (err) {
